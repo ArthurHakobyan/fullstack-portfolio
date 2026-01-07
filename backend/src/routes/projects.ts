@@ -1,5 +1,6 @@
 import { Router } from "express";
 import * as controller from "../controllers/projectsController";
+import { validateProject } from "../middleware/validateProject";
 
 const router = Router();
 
@@ -7,6 +8,6 @@ const router = Router();
 router.get("/", controller.getProjects);
 
 // POST /projects
-router.post("/", controller.createProject);
+router.post("/", validateProject, controller.createProject);
 
 export default router;
