@@ -1,27 +1,24 @@
 import { Request, Response } from "express";
-import { Project } from "../types/projects";
+import * as repo from "../repositories/projectsRepository";
 
-// Temporary in-memory storage
-const projects: Project[] = [
-  { id: 1, title: "Portfolio Project", description: "My first portfolio project" },
-  { id: 2, title: "Blog App", description: "A simple blog app" }
-];
-
-// GET /projects
-export const getProjects = (req: Request, res: Response) => {
-  res.json(projects);
+export const getProjects = async (_req: Request, res: Response) => {
+  try {
+    const projects = await repo.getAllProjects();
+    res.json(projects);
+  } catch (error) {
+    console.error("GET /projects error:", error);
+    res.status(500).json({ error: "Failed to fetch projects" });
+  }
 };
 
-// POST /projects
-export const createProject = (req: Request, res: Response) => {
-  const { title, description } = req.body;
+export const createProject = async (req: Request, res: Response) => {
+  try {
+    const { title, description } = req.body;
 
-  const newProject: Project = {
-    id: projects.length ? projects[projects.length - 1].id + 1 : 1,
-    title,
-    description
-  };
-
-  projects.push(newProject);
-  res.status(201).json(newProject);
+    const project = await repo.createProject(title, description);
+    res.status(201).json(project);
+  } catch (error) {
+    console.error("POST /projects error:", error);
+    res.status(500).json({ error: "Failed to create project" });
+  }
 };
